@@ -41,7 +41,7 @@ for i,filename in enumerate(glob.glob('C:/Users/03308/trend/*.txt')):
             y.append(j) 
             line = float(line.strip('\n'))
             z.append(line) 
-    x,y,z=downsample(x,y,z)    #降采样，不过效果似乎不是很好
+    #x,y,z=downsample(x,y,z)    #降采样，不过效果似乎不是很好
     axes3d.plot(x,y,z,color = 'b')  #循环写入三维图
 
 plt.xlabel('day')
