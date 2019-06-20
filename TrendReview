@@ -1,0 +1,55 @@
+#coding=gbk
+#列明以避免注释中的中文引起编码异常
+
+#https://blog.csdn.net/xguardian/article/details/81088499
+#学习了网络资料，如何画3d图
+
+#导入各种模块
+from mpl_toolkits.mplot3d.axes3d import Axes3D
+import matplotlib.pyplot as plt
+import numpy as np
+import glob
+
+#构建空白三维图
+fig = plt.figure(figsize=(8,6))
+axes3d = Axes3D(fig)
+#构建降采样函数，10取1，取峰值
+def downsample(x,y,z):
+    a=[]
+    b=[]
+    c=[]
+    for i in range(499):
+        com=[]
+        for j in range(9):
+              com.append(z[i*10+j])
+        a.append(x[i])
+        b.append(y[i]*10)
+        c.append(max(com))    
+    return  a,b,c
+
+#循环读取文件夹中记录文档
+day=[]
+for i,filename in enumerate(glob.glob('C:/Users/03308/trend/*.txt')):
+    x=[]
+    y=[]
+    z=[]
+    dayi=int(filename[28:34])  #从文件名得到记录时间
+    day.append(dayi)  #记录日期以便最后作图时显示坐标轴
+    with open(filename) as file:
+        for j,line in enumerate(file):
+            x.append(dayi)
+            y.append(j) 
+            line = float(line.strip('\n'))
+            z.append(line) 
+    x,y,z=downsample(x,y,z)    #降采样，不过效果似乎不是很好
+    axes3d.plot(x,y,z,color = 'b')  #循环写入三维图
+
+plt.xlabel('day')
+plt.ylabel('hz')
+axes3d.set_zlabel('g')
+
+dmax=max(day)
+dmin=min(day)
+axes3d.set_xticks([dmin,dmax])
+
+plt.show()
