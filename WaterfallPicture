@@ -52,6 +52,8 @@ def formcontour(file,number) :
 #    C = plt.contour(X,Y,mat,colorlevel,colors = 'black')
 #adding label
     plt.clabel(C,inline = True,fontsize = 10)
+#在图片上显示number
+    plt.text(0,0,str(number),fontsize=24)
 #xy轴上的名字
     plt.xlabel("time")
     plt.ylabel("Hz")
