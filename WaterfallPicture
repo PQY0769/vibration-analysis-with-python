@@ -1,0 +1,60 @@
+#xlrd
+#https://blog.csdn.net/qq_37372196/article/details/89714802
+#openpyxl
+#https://www.cnblogs.com/crazymagic/articles/9752287.html
+
+import matplotlib.pyplot as plt 
+#要想在 Jupyter notebook 中使用 matplotlib，需要告诉 Jupyter 获取 matplotlib 生成的所有图形，并将其嵌入 notebook 中
+%matplotlib inline 
+from matplotlib import cm
+from mpl_toolkits.mplot3d import Axes3D
+import xlrd       
+import numpy as np
+from PIL import Image
+
+def tanh(x):
+    return (np.exp(x) - np.exp(-x)) / (np.exp(x) + np.exp(-x))
+
+
+def sigmoid(x):
+    return 1. / (1 + np.exp(-x))
+
+def formcontour(file,number) :
+   
+    name = file.sheet_names()[0]  # 获取Excel中的sheet名字，第一个sheet
+    sheet = file.sheet_by_name(name) # 选择指定sheet进行操作
+
+    #meshgrid函数用两个坐标轴上的点在平面上画网格
+    x = []
+    y = []
+    dt=0.1
+    df=25
+    for i in range(0, sheet.ncols):
+        x.append(i*dt)
+    for j in range(0, sheet.nrows):
+        y.append((j-1)*df)
+    X,Y = np.meshgrid(x,y)    
+
+    mat=np.empty((sheet.nrows,sheet.ncols))    
+    for i in range(0, sheet.ncols):
+        for j in range(0, sheet.nrows):
+#            mat[j,i]=sheet.cell(j,i).value
+            mat[j,i]=tanh(sheet.cell(j,i).value) #project to tahn to enlarge difference
+
+#清理图片记录以免前面的图变成后面的图的背景 
+    plt.clf()
+#use plt.contourf to filling contours
+#X Y and value for (X,Y) point
+#这里的colorlevel就是说明等高线分成多少个部分，如果是0则分成2半, 8是分成10半,或者用向量设定统一坐标，cmap找对应的颜色，如果高=0就找0对应的颜色值，
+    colorlevel=[0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1.0]
+    plt.contourf(X,Y,mat,colorlevel,alpha = .75,cmap = plt.cm.hot)
+#use plt.contour to add contour lines
+#    C = plt.contour(X,Y,mat,colorlevel,colors = 'black')
+#adding label
+    plt.clabel(C,inline = True,fontsize = 10)
+#xy轴上的名字
+    plt.xlabel("time")
+    plt.ylabel("Hz")
+    plt.savefig(str(number)+'.png')#保存图片
+
+formcontour(xlrd.open_workbook('388H.xlsx'),388)
