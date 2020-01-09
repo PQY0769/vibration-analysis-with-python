@@ -27,19 +27,23 @@ def formcontour(file,number) :
     #meshgrid函数用两个坐标轴上的点在平面上画网格
     x = []
     y = []
+    maxstep=1000 #不同时长的降速使用统一大小的图片展示
     dt=0.1
     df=25
-    for i in range(0, sheet.ncols):
+    for i in range(0, maxstep):
         x.append(i*dt)
     for j in range(0, sheet.nrows):
         y.append((j-1)*df)
     X,Y = np.meshgrid(x,y)    
 
-    mat=np.empty((sheet.nrows,sheet.ncols))    
-    for i in range(0, sheet.ncols):
+    mat=np.empty((sheet.nrows,maxstep))    
+    for i in range(0, maxstep):
         for j in range(0, sheet.nrows):
 #            mat[j,i]=sheet.cell(j,i).value
-            mat[j,i]=tanh(sheet.cell(j,i).value) #project to tahn to enlarge difference
+            if i < sheet.ncols:
+                mat[j,i]=tanh(sheet.cell(j,i).value) #project to tahn to enlarge difference
+            else:
+                mat[j,i]=0
 
 #清理图片记录以免前面的图变成后面的图的背景 
     plt.clf()
